@@ -31,7 +31,7 @@ for USERNAME in "$@"; do
 
     #Blocket skapar innehåller för welcome.text. etc/passwd innehåller användare på systemet.
     {
-        printf "Välkommen %s\n\n" "$USERNAME"
+        printf "Välkommen %s" "$USERNAME"
         printf "Existing users:\n"
         awk -F: '$3 >= 1000 && $1 != "'"$USERNAME"'" {print $1}' /etc/passwd
     } > "/home/$USERNAME/welcome.txt"
