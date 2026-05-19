@@ -28,22 +28,27 @@ for USERNAME in "$@"; do
 
     #Sätter lösenordet till samma som användarnamnet.
     chpasswd <<< "$USERNAME:$USERNAME"
+   #Skapar mapparna i användarens hemkatalog. -p ÄVEN om den finns så skapar det utan att krångla.
+    mkdir -p "/home/$USERNAME/Documents" "/home/$USERNAME/Downloads" "/home/$USERNAME/Work"
 
+   #Change owner till användare så inte root äger det när skripten körs.
+    chown -R "$USERNAME:employees" "/home/$USERNAME"
+ #Sätter rättigheter.
+    chmod 700 "/home/$USERNAME/Documents" "/home/$USERNAME/Downloads" "/home/$USERNAME/Work"
     #Blocket skapar innehåller för welcome.text. etc/passwd innehåller användare på systemet.
+
+
+done
+
+
+for USERNAME in "$@"; do 
     {
-        printf "Välkommen %s" "$USERNAME"
+        printf "Välkommen %s\n\n" "$USERNAME"
         printf "Existing users:\n"
         awk -F: '$3 >= 1000 && $1 != "'"$USERNAME"'" {print $1}' /etc/passwd
     } > "/home/$USERNAME/welcome.txt"
 
-    #Skapar mapparna i användarens hemkatalog. -p ÄVEN om den finns så skapar det utan att krångla.
-    mkdir -p "/home/$USERNAME/Documents" "/home/$USERNAME/Downloads" "/home/$USERNAME/Work"
-
-    #Change owner till användare så inte root äger det när skripten körs.
-    chown -R "$USERNAME:employees" "/home/$USERNAME"
-
-    #Sätter rättigheter.
-    chmod 700 "/home/$USERNAME/Documents" "/home/$USERNAME/Downloads" "/home/$USERNAME/Work"
+    chown "$USERNAME:employees" "/home/$USERNAME/welcome.txt"
     chmod 600 "/home/$USERNAME/welcome.txt"
 
 done
